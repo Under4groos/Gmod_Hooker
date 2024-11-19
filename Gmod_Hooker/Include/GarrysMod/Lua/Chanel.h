@@ -16,12 +16,16 @@ public:
 		char buffer[5024];
 		Packet packet(buffer, std::size(buffer));
 
+	 
 		packet.write_ulong_bit(5, 6);
 		packet.write_byte(1);
 		packet.write_string("name");
 		packet.write_string(name.data());
-
 		this->send_data(packet);
+
+		 
+
+		 
 	}
 
 	inline void write(std::string_view text)

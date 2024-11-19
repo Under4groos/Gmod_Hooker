@@ -1,6 +1,8 @@
 ﻿// dllmain.cpp : Определяет точку входа для приложения DLL.
 #include "Headers.h"
-#include "Include/GarrysMod/Lua/Chanel.h"
+#include "Include/Modules/LuaLoader.h"
+#include "Include/Modules/ChangeName.h"
+
 
 HwndThread Thread, Threadun;
 
@@ -12,11 +14,7 @@ ILuaShared* LuaShared;
 namespace ModuleHandles {
 	ILuaShared* LuaShared;
 	HMODULE LuaShared_modhandle;
-
 	CreateInterfaceFn LuaShared_createinter;
-
-
-
 	ILuaInterface* ClientLuaInterface;
 }
 
@@ -28,68 +26,88 @@ void InitGameEngine() {
 	EngineClient = DLLimport::CaptureInterface<IEngineClient>("engine.dll", "VEngineClient013");
 	Console::WriteLog("engine.dll -> VEngineClient013", std::to_string((int)EngineClient));
 
-	int w, h;
-	EngineClient->get_screen_size(w, h);
-	Console::WriteLog(std::to_string((int)w), std::to_string((int)h));
-
-
-	Channel* ch = EngineClient->get_net_channel();
-	if (ch) {
-		ch->set_name("[C++][Coder] Underko");
-	}
-	/*auto id_ = EngineClient->get_local_player();
-	player_info_t info{ 0 };
-	EngineClient->get_player_info(id_, &info);
-	Console::WriteLog(info.name, std::to_string((int)info.id));*/
-
 
 	if (!EngineClient)
 		return;
 
-
-
 	ModuleHandles::LuaShared_modhandle = GetModuleHandleA("lua_shared.dll");
 	Console::WriteLog("lua_shared.dll ", std::to_string((int)ModuleHandles::LuaShared_modhandle));
 
-	if (!ModuleHandles::LuaShared_modhandle)
-		return;
+	if (ModuleHandles::LuaShared_modhandle)
+	{
+		ModuleHandles::LuaShared_createinter = (CreateInterfaceFn)GetProcAddress(ModuleHandles::LuaShared_modhandle, "CreateInterface");
+		Console::WriteLog("LuaShared_createinter -> CreateInterface", std::to_string((int)ModuleHandles::LuaShared_createinter));
+
+		if (ModuleHandles::LuaShared_createinter)
+		{
+			ModuleHandles::LuaShared = (ILuaShared*)ModuleHandles::LuaShared_createinter(LUASHARED_INTERFACE_VERSION, NULL);
+			Console::WriteLog("LuaShared ", std::to_string((int)ModuleHandles::LuaShared));
+			if (ModuleHandles::LuaShared)
+			{
+				ModuleHandles::ClientLuaInterface = ModuleHandles::LuaShared->GetLuaInterface(LuaInterfaceType::LUAINTERFACE_CLIENT);
+				Console::WriteLog("ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
+				if (ModuleHandles::ClientLuaInterface)
+				{
+
+				}
+			}
+		}
+	}
+
+	int w, h;
+	bool is_loaded_base_script = false;
+	while (true)
+	{
+		if (!EngineClient)
+			continue;
+		if (EngineClient->is_ingame()) {
+			if (is_loaded_base_script == false) {
+				is_loaded_base_script = true;
+				Console::WriteLog("Loaded script");
+			}
+			
+		}
+		else {
+			is_loaded_base_script = false;
+		}
+		
 
 
-	ModuleHandles::LuaShared_createinter = (CreateInterfaceFn)GetProcAddress(ModuleHandles::LuaShared_modhandle, "CreateInterface");
-	Console::WriteLog("LuaShared_createinter -> CreateInterface", std::to_string((int)ModuleHandles::LuaShared_createinter));
+		Console::WriteLog(std::to_string(EngineClient->is_ingame()));
 
-	if (!ModuleHandles::LuaShared_createinter)
-		return;
-
-	ModuleHandles::LuaShared = (ILuaShared*)ModuleHandles::LuaShared_createinter(LUASHARED_INTERFACE_VERSION, NULL);
-	Console::WriteLog("LuaShared ", std::to_string((int)ModuleHandles::LuaShared));
-	if (!ModuleHandles::LuaShared)
-		return;
-
-	ModuleHandles::ClientLuaInterface = ModuleHandles::LuaShared->GetLuaInterface(LuaInterfaceType::LUAINTERFACE_CLIENT);
-	Console::WriteLog("ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
-	if (!ModuleHandles::ClientLuaInterface)
-		return;
+		/*Console::WriteLog("tick");
+		EngineClient->get_screen_size(w, h);
+		Console::WriteLog(std::to_string((int)w), std::to_string((int)h));*/
 
 
+		Sleep(1000);
+	}
 
 
+	//set_name(EngineClient, "<void>");
 
-	//ModuleHandles::ClientLuaInterface->RunString("RunString", "", "print(123)", true, true);
+	//lua_load(ModuleHandles::ClientLuaInterface , "");
 
 
-
+	//EngineClient->is_ingame()
 }
 
 
 OutThread ThreadUnload() {
+	int w, h;
 	while (true)
 	{
+		if (!EngineClient)
+			continue;
 		Console::WriteLog("tick");
-		if (!GetModuleHandleA("Gmod_Hooker.dll")) {
-			FreeConsole();
-			break;
-		}
+
+
+
+		EngineClient->get_screen_size(w, h);
+
+		Console::WriteLog(std::to_string((int)w), std::to_string((int)h));
+
+
 		Sleep(1000);
 	}
 	return 0;
@@ -139,7 +157,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
 		Thread = CreateThread(NULL, 4096, (LPTHREAD_START_ROUTINE)ThreadInit, hModule, 0, NULL);
 
-
+		//Threadun = CreateThread(NULL, 4096, (LPTHREAD_START_ROUTINE)ThreadUnload, hModule, 0, NULL);
 
 
 		break;

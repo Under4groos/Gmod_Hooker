@@ -4,6 +4,9 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <future>
 using namespace std;
 
 #include "include/GarrysMod/Lua/Interface.h"
@@ -13,6 +16,11 @@ using namespace std;
 #include "include/GarrysMod/Lua/GLua.h"
 #include "include/GarrysMod/Lua/SourceCompat.h"
 #include "Include/GarrysMod/Lua/IEngineClient.h"
+#include "Include/GarrysMod/Lua/Chanel.h"
+
+
+
+
 
 #include "DLLimport.cpp"
 #include "OutConsole.h"

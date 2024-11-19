@@ -5,6 +5,8 @@
 #include <string_view>
 #include "Interface.h"
 
+ 
+
 // It's the dword police
 using ulong_t = unsigned long;
 using long_t = signed long;
@@ -116,8 +118,12 @@ public:
 
 	inline void write_string(const char* str)
 	{
-		if (str)
+		
+		if (str) {
+			 
 			for (this->write_char(*str); *str; this->write_char(*++str));
+		}
+			
 		else
 			this->write_char(0);
 	}
