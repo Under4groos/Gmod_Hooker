@@ -8,6 +8,7 @@
 namespace Console {
     // Function declaration
     void WriteLog(std::string strM, std::string strI);
+    void WriteLog(std::string strM);
 }
 
 #endif // HEADERS_H

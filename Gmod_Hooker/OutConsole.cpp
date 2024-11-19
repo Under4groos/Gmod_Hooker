@@ -5,5 +5,9 @@ namespace Console {
 	{
 		std::cout << strM << " " << strI << std::endl;
 	}
+	void WriteLog(std::string strM)
+	{
+		std::cout << strM  << std::endl;
+	}
 }
  

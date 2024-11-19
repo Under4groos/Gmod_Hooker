@@ -4,6 +4,23 @@
 struct ViewMatrix_t;
 struct player_info_t;
 
+ 
+struct player_info_t
+{
+	char name[32];
+	int  id;
+	char guid[33];
+	struct
+	{
+		uint32_t id;
+		char name[32];
+	} buddy;
+	bool bot;
+	bool hltv;
+	uint32_t files[4];
+	uint8_t  downloaded;
+};
+
 class IEngineClient {
 public:
 	virtual void pad0() = 0;
