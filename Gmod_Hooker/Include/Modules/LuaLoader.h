@@ -18,5 +18,13 @@ void lua_load(ILuaInterface* lua, const std::string& file) {
 				lua->RunString("", "", lua_string.c_str());
 			}
 			File.close();
+		});
+}
+
+void lua_load_code(ILuaInterface* lua, const std::string& code) {
+
+	std::async(std::launch::async, [&]
+	{
+		lua->RunString("", "", code.c_str(), true, true);
 	});
 }

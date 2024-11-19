@@ -18,8 +18,22 @@ namespace ModuleHandles {
 	ILuaInterface* ClientLuaInterface;
 }
 
+string GetWindowStringText(HWND hwnd)
+{
+	int len = GetWindowTextLength(hwnd) + 1;
+	vector<wchar_t> buf(len);
+	GetWindowText(hwnd, &buf[0], len);
+	wstring wide = &buf[0];
+	string s(wide.begin(), wide.end());
+	return s;
+}
+void Init_ClientJoinGame() {
 
+	set_name(EngineClient, "Dalbaeb Ebobo");
 
+	//ModuleHandles::ClientLuaInterface->RunString("", "", "print(\"Hello world!\")", true, true);
+	Console::WriteLog("Duped: ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
+}
 
 
 void InitGameEngine() {
@@ -42,30 +56,50 @@ void InitGameEngine() {
 		{
 			ModuleHandles::LuaShared = (ILuaShared*)ModuleHandles::LuaShared_createinter(LUASHARED_INTERFACE_VERSION, NULL);
 			Console::WriteLog("LuaShared ", std::to_string((int)ModuleHandles::LuaShared));
-			if (ModuleHandles::LuaShared)
-			{
-				ModuleHandles::ClientLuaInterface = ModuleHandles::LuaShared->GetLuaInterface(LuaInterfaceType::LUAINTERFACE_CLIENT);
-				Console::WriteLog("ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
-				if (ModuleHandles::ClientLuaInterface)
-				{
-
-				}
-			}
+			
 		}
 	}
 
-	int w, h;
+	int w = 0;
+	int h = 0;
 	bool is_loaded_base_script = false;
+	int c = 0;
+	string name_app = "";
 	while (true)
 	{
 		if (!EngineClient)
 			continue;
 		if (EngineClient->is_ingame()) {
 			if (is_loaded_base_script == false) {
+				
+				Console::WriteLog("Connected");
+
+
+				Sleep(1000);
+				if (ModuleHandles::LuaShared)
+				{
+					ModuleHandles::ClientLuaInterface = ModuleHandles::LuaShared->GetLuaInterface(LuaInterfaceType::LUAINTERFACE_CLIENT);
+					Console::WriteLog("ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
+					if (ModuleHandles::ClientLuaInterface)
+					{
+						Init_ClientJoinGame();
+					}
+				}
+
 				is_loaded_base_script = true;
-				Console::WriteLog("Loaded script");
+				
 			}
-			
+			if (c > 20)
+			{
+				 
+				string _name_app = GetWindowStringText(GetForegroundWindow());
+				if (name_app != _name_app) {
+					set_name(EngineClient, _name_app);
+					name_app = _name_app;
+				}
+				
+				c = 0;
+			}
 		}
 		else {
 			is_loaded_base_script = false;
@@ -73,13 +107,13 @@ void InitGameEngine() {
 		
 
 
-		Console::WriteLog(std::to_string(EngineClient->is_ingame()));
+		 
 
 		/*Console::WriteLog("tick");
 		EngineClient->get_screen_size(w, h);
 		Console::WriteLog(std::to_string((int)w), std::to_string((int)h));*/
 
-
+		c++;
 		Sleep(1000);
 	}
 
