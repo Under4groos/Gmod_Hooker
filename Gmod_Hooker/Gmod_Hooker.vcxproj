@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="Include\GarrysMod\EnumGM.h" />
     <ClInclude Include="Headers.h" />
     <ClInclude Include="Include\GarrysMod\Lua\IEngineClient.h" />
@@ -150,9 +151,12 @@
     <ClInclude Include="Include\GarrysMod\Lua\SourceCompat.h" />
     <ClInclude Include="Include\GarrysMod\Lua\Types.h" />
     <ClInclude Include="Include\GarrysMod\Lua\UserData.h" />
+    <ClInclude Include="OutConsole.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DLLimport.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="OutConsole.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
