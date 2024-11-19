@@ -145,9 +145,12 @@
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Include\GarrysMod\EnumGM.h" />
     <ClInclude Include="Headers.h" />
+    <ClInclude Include="Include\GarrysMod\Lua\Chanel.h" />
+    <ClInclude Include="Include\GarrysMod\Lua\CustomFuncs.h" />
     <ClInclude Include="Include\GarrysMod\Lua\IEngineClient.h" />
     <ClInclude Include="Include\GarrysMod\Lua\Interface.h" />
     <ClInclude Include="Include\GarrysMod\Lua\LuaBase.h" />
+    <ClInclude Include="Include\GarrysMod\Lua\Net.h" />
     <ClInclude Include="Include\GarrysMod\Lua\SourceCompat.h" />
     <ClInclude Include="Include\GarrysMod\Lua\Types.h" />
     <ClInclude Include="Include\GarrysMod\Lua\UserData.h" />
