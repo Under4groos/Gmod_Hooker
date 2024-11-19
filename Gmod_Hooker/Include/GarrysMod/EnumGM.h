@@ -1,0 +1,11 @@
+#pragma once
+
+
+enum class GM {
+	GM_NOTSET,
+	GM_COULDNOTFIND,
+	GM_DARKRP,
+	GM_TTT,
+	GM_SANDBOX,
+	GM_JAILBREAK
+};
