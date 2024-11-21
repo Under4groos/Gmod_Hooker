@@ -29,7 +29,7 @@ string GetWindowStringText(HWND hwnd)
 }
 void Init_ClientJoinGame() {
 
-	set_name(EngineClient, "Dalbaeb Ebobo");
+	set_name(EngineClient, "[XUILO][CODER][C++/C]Dalbaeb Ebobo");
 
 	//ModuleHandles::ClientLuaInterface->RunString("", "", "print(\"Hello world!\")", true, true);
 	Console::WriteLog("Duped: ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
@@ -56,14 +56,13 @@ void InitGameEngine() {
 		{
 			ModuleHandles::LuaShared = (ILuaShared*)ModuleHandles::LuaShared_createinter(LUASHARED_INTERFACE_VERSION, NULL);
 			Console::WriteLog("LuaShared ", std::to_string((int)ModuleHandles::LuaShared));
-			
+
 		}
 	}
 
-	int w = 0;
-	int h = 0;
+
 	bool is_loaded_base_script = false;
-	int c = 0;
+
 	string name_app = "";
 	while (true)
 	{
@@ -71,10 +70,8 @@ void InitGameEngine() {
 			continue;
 		if (EngineClient->is_ingame()) {
 			if (is_loaded_base_script == false) {
-				
+
 				Console::WriteLog("Connected");
-
-
 				Sleep(1000);
 				if (ModuleHandles::LuaShared)
 				{
@@ -87,43 +84,16 @@ void InitGameEngine() {
 				}
 
 				is_loaded_base_script = true;
-				
-			}
-			if (c > 20)
-			{
-				 
-				string _name_app = GetWindowStringText(GetForegroundWindow());
-				if (name_app != _name_app) {
-					set_name(EngineClient, _name_app);
-					name_app = _name_app;
-				}
-				
-				c = 0;
+
 			}
 		}
 		else {
 			is_loaded_base_script = false;
 		}
-		
 
-
-		 
-
-		/*Console::WriteLog("tick");
-		EngineClient->get_screen_size(w, h);
-		Console::WriteLog(std::to_string((int)w), std::to_string((int)h));*/
-
-		c++;
 		Sleep(1000);
 	}
 
-
-	//set_name(EngineClient, "<void>");
-
-	//lua_load(ModuleHandles::ClientLuaInterface , "");
-
-
-	//EngineClient->is_ingame()
 }
 
 
@@ -157,17 +127,11 @@ OutThread ThreadInit() {
 		freopen_s(&fDummy, "CONOUT$", "w", stderr);
 		freopen_s(&fDummy, "CONOUT$", "w", stdout);
 	}
-
-
-
 	Console::WriteLog("Show console", "");
 	Console::WriteLog("Thread id:", std::to_string((int)Thread));
-
-
 	if (GetModuleHandleA("engine.dll")) {
 		InitGameEngine();
 	}
-
 	FreeLibraryAndExitThread(hModule_dll, 0);
 	Console::WriteLog("FreeLibraryAndExitThread");
 	return 0;
@@ -181,30 +145,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	LPVOID lpReserved
 )
 {
-
 	hModule_dll = hModule;
 	DisableThreadLibraryCalls(hModule);
-	switch (ul_reason_for_call)
-	{
-
-	case DLL_PROCESS_ATTACH:
-
+	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 		Thread = CreateThread(NULL, 4096, (LPTHREAD_START_ROUTINE)ThreadInit, hModule, 0, NULL);
-
-		//Threadun = CreateThread(NULL, 4096, (LPTHREAD_START_ROUTINE)ThreadUnload, hModule, 0, NULL);
-
-
-		break;
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-
-
-
-		break;
-	case DLL_PROCESS_DETACH:
-
-		break;
-	}
 	return TRUE;
 }
 
