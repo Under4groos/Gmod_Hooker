@@ -57,7 +57,10 @@
     <ClInclude Include="Include\Modules\LuaLoader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Modules\ChangeName.h">
+    <ClInclude Include="Include\Modules\GameConsole.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Modules\GameILuaInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,7 +19,7 @@ namespace GarrysMod
 		class ILuaBase
 		{
 		public:
-
+			virtual void        SetState(lua_State* L) = 0;
 			virtual int			Top(void) = 0;
 			virtual void		Push(int iStackPos) = 0;
 			virtual void		Pop(int iAmt = 1) = 0;

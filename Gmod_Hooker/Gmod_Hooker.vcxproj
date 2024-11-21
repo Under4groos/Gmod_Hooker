@@ -150,7 +150,8 @@
     <ClInclude Include="Include\GarrysMod\Lua\IEngineClient.h" />
     <ClInclude Include="Include\GarrysMod\Lua\Interface.h" />
     <ClInclude Include="Include\GarrysMod\Lua\LuaBase.h" />
-    <ClInclude Include="Include\Modules\ChangeName.h" />
+    <ClInclude Include="Include\Modules\GameConsole.h" />
+    <ClInclude Include="Include\Modules\GameILuaInterface.h" />
     <ClInclude Include="Include\Modules\LuaLoader.h" />
     <ClInclude Include="Include\GarrysMod\Lua\Net.h" />
     <ClInclude Include="Include\GarrysMod\Lua\SourceCompat.h" />

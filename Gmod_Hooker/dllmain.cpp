@@ -1,85 +1,94 @@
 ﻿// dllmain.cpp : Определяет точку входа для приложения DLL.
 #include "Headers.h"
-#include "Include/Modules/LuaLoader.h"
-#include "Include/Modules/ChangeName.h"
-
-
+#include "Include/Modules/GameILuaInterface.h"
 HwndThread Thread, Threadun;
 
-IEngineClient* EngineClient;
+
 
 HMODULE hModule_dll;
-ILuaShared* LuaShared;
+ 
 
-namespace ModuleHandles {
-	ILuaShared* LuaShared;
-	HMODULE LuaShared_modhandle;
-	CreateInterfaceFn LuaShared_createinter;
-	ILuaInterface* ClientLuaInterface;
-}
 
-string GetWindowStringText(HWND hwnd)
+LUA_FUNCTION(MyFirstFunction)
 {
-	int len = GetWindowTextLength(hwnd) + 1;
-	vector<wchar_t> buf(len);
-	GetWindowText(hwnd, &buf[0], len);
-	wstring wide = &buf[0];
-	string s(wide.begin(), wide.end());
-	return s;
+	 
+
+	double number = (LUA -> GetNumber(1));  // Получить первый аргумент 
+
+	if (number > 9.0) // Если число больше 9... 
+	{
+		LUA -> PushBool(true);  // push true... 
+	}
+	else
+	{
+		LUA -> PushBool(false);  // в противном случае push false. 
+	}
+
+	return  1;  // Сколько значений мы возвращаем 
 }
+
+
+
+//void regfunc() {
+//	ModuleHandles::ClientLuaInterface->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);  // Помещаем глобальную таблицу 
+//	ModuleHandles::ClientLuaInterface->PushCFunction(MyFirstFunction);  // Помещаем нашу функцию 
+//	ModuleHandles::ClientLuaInterface->SetField(-2, "MyFirstFunction");  // Устанавливаем MyFirstFunction в lua в нашу функцию C++ 
+//	ModuleHandles::ClientLuaInterface->Pop();  // Помещаем глобальную таблицу из стека 
+//	Console::WriteLog("GMOD_MODULE_OPEN", std::to_string((int)ModuleHandles::ClientLuaInterface));
+//}
+ 
+ 
 void Init_ClientJoinGame() {
 
-	set_name(EngineClient, "[XUILO][CODER][C++/C]Dalbaeb Ebobo");
+	GameILuaInterface::SetOwnerName("[XUILO][CODER][C++/C]Dalbaeb Ebobo");
 
-	//ModuleHandles::ClientLuaInterface->RunString("", "", "print(\"Hello world!\")", true, true);
+
+
+	/*std::string script = "";
+
+	script += " concommand.Add( \"rc\", function( ply, cmd, args, str ) ";
+	script += " RunString(str) ";
+	script += " end)  ";
+
+	regfunc();
+
+	ModuleHandles::ClientLuaInterface->RunString("", "", script.c_str(), true, true);
 	Console::WriteLog("Duped: ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
+
+
+	 
+	GConsole::print(ModuleHandles::ClientLuaInterface, "Start game");
+	 
+
+
+	 
+	ModuleHandles::VGUI_LuaInterface->RunString("", "", "concommand.Add('rm', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
 }
 
 
 void InitGameEngine() {
-	EngineClient = DLLimport::CaptureInterface<IEngineClient>("engine.dll", "VEngineClient013");
-	Console::WriteLog("engine.dll -> VEngineClient013", std::to_string((int)EngineClient));
-
-
-	if (!EngineClient)
-		return;
-
-	ModuleHandles::LuaShared_modhandle = GetModuleHandleA("lua_shared.dll");
-	Console::WriteLog("lua_shared.dll ", std::to_string((int)ModuleHandles::LuaShared_modhandle));
-
-	if (ModuleHandles::LuaShared_modhandle)
-	{
-		ModuleHandles::LuaShared_createinter = (CreateInterfaceFn)GetProcAddress(ModuleHandles::LuaShared_modhandle, "CreateInterface");
-		Console::WriteLog("LuaShared_createinter -> CreateInterface", std::to_string((int)ModuleHandles::LuaShared_createinter));
-
-		if (ModuleHandles::LuaShared_createinter)
-		{
-			ModuleHandles::LuaShared = (ILuaShared*)ModuleHandles::LuaShared_createinter(LUASHARED_INTERFACE_VERSION, NULL);
-			Console::WriteLog("LuaShared ", std::to_string((int)ModuleHandles::LuaShared));
-
-		}
-	}
-
+ 
+	GameILuaInterface::Init();
 
 	bool is_loaded_base_script = false;
 
 	string name_app = "";
 	while (true)
 	{
-		if (!EngineClient)
+		if (!GameILuaInterface::IsValid_Engine())
 			continue;
-		if (EngineClient->is_ingame()) {
+		if (GameILuaInterface::EngineClient->is_ingame()) {
 			if (is_loaded_base_script == false) {
 
 				Console::WriteLog("Connected");
 				Sleep(1000);
-				if (ModuleHandles::LuaShared)
+				if (GameILuaInterface::IsValid_LuaShared())
 				{
-					ModuleHandles::ClientLuaInterface = ModuleHandles::LuaShared->GetLuaInterface(LuaInterfaceType::LUAINTERFACE_CLIENT);
-					Console::WriteLog("ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
-					if (ModuleHandles::ClientLuaInterface)
+					GameILuaInterface::Init_Client_or_Menu();
+					if (GameILuaInterface::IsValid_LUAINTERFACE(LuaInterfaceType::LUAINTERFACE_CLIENT))
 					{
 						Init_ClientJoinGame();
+						 
 					}
 				}
 
@@ -97,25 +106,7 @@ void InitGameEngine() {
 }
 
 
-OutThread ThreadUnload() {
-	int w, h;
-	while (true)
-	{
-		if (!EngineClient)
-			continue;
-		Console::WriteLog("tick");
-
-
-
-		EngineClient->get_screen_size(w, h);
-
-		Console::WriteLog(std::to_string((int)w), std::to_string((int)h));
-
-
-		Sleep(1000);
-	}
-	return 0;
-}
+ 
 
 
 
@@ -129,7 +120,7 @@ OutThread ThreadInit() {
 	}
 	Console::WriteLog("Show console", "");
 	Console::WriteLog("Thread id:", std::to_string((int)Thread));
-	if (GetModuleHandleA("engine.dll")) {
+	if (GameILuaInterface::IsValid_Engine()) {
 		InitGameEngine();
 	}
 	FreeLibraryAndExitThread(hModule_dll, 0);

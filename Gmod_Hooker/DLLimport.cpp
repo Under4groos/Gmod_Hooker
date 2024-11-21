@@ -13,4 +13,7 @@ namespace DLLimport {
 		CreateInterfaceFn CreateInterface = (CreateInterfaceFn)GetProcAddress(GetModuleHandleA(strModule.c_str()), "CreateInterface");
 		return CreateInterface(strInterface.c_str(), 0);
 	}
+
+	 
+
 }
