@@ -7,6 +7,8 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
+const char* module_name = "Gmod_Hooker.dll";
+
 
 using namespace std;
 BOOL is_main_window(HWND handle)
@@ -43,17 +45,18 @@ int main()
 					DWORD szModNameSize = sizeof(szModName);
 					if (GetModuleFileNameExA(handle, lphModule[i], szModName, szModNameSize))
 					{
-					 
-						std::cout << lphModule[i] << " " << fs::path(szModName).filename()  << endl;
-						 
+
+						if (fs::path(szModName).filename() == module_name)
+							std::cout << lphModule[i] << endl;
+
 					}
 				}
 
 			}
 			CloseHandle(handle);
 		}
-		
-		
+
+
 	}
 
 
