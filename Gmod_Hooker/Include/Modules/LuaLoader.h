@@ -15,7 +15,7 @@ void lua_load(ILuaInterface* lua, const std::string& file) {
 				std::string lua_string((std::istreambuf_iterator<char>(File)), std::istreambuf_iterator<char>());
 				if (lua_string.empty())
 					return;
-				lua->RunString("", "", lua_string.c_str());
+				lua->RunString("", "", lua_string.c_str() );
 			}
 			File.close();
 		});

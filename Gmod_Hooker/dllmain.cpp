@@ -1,7 +1,7 @@
 ﻿// dllmain.cpp : Определяет точку входа для приложения DLL.
 #include "Headers.h"
 #include "Include/Modules/GameILuaInterface.h"
- 
+#include "Include/Modules/LuaLoader.h"
  
 HwndThread Thread, Threadun;
 
@@ -10,36 +10,77 @@ HwndThread Thread, Threadun;
 HMODULE hModule_dll;
  
 
+//const char* glua_code = R"V0G0N(        
+//G_ = G_ or {}
+//if(G_.file_read == nil) then
+//	G_.file_read =  file.Read
+//end
+//file.Read = function(filename, path)
+//	print("[file.Read]: " .. path.."/"..filename)
+//	return G_.file_read(filename, path)
+//end
+//concommand.Add("run_c_f", function(ply, cmd, args, str)
+//	if( table.Count(args) >= 1) then
+//		local str_code = file.Read(args[1], "DATA")
+//		if(string != "") then
+//			RunString(str_code)
+//			print("Run code:\n" .. str_code)
+//		else
+//			print("error code! " ..  args[1])
+//		end
+//	end
+//end)
+//)V0G0N";
 
+const char* glua_code = R"V0G0N(        
+concommand.Add("run_c_f", function(ply, cmd, args, str)
+	if( table.Count(args) >= 1) then
+		local str_code = file.Read(args[1], "DATA")
+		if(string != "") then
+			RunString(str_code)
+			print("Run code:\n" .. str_code)
+		else
+			print("error code! " ..  args[1])
+		end
+	end
+end)
 
- 
+function GetEyeTrace()
+	return  LocalPlayer():GetEyeTrace()
+end
+function GetEyeTrace_Entity()
+	return  LocalPlayer():GetEyeTrace()["Entity"]
+end
+)V0G0N";
+
 void Init_ClientJoinGame() {
 
 
 
 
  
-	GameILuaInterface::SetOwnerName("[XUILO][CODER][C++/C]Dalbaeb Ebobo");
+	GameILuaInterface::SetOwnerName("<>");
 	
-	GameILuaInterface::ConsolePrint( "Start game");
+	
 	
 	GameILuaInterface::RunScript(LuaInterfaceType::LUAINTERFACE_CLIENT, "concommand.Add('run_c', function(a, b, c, d) RunString(d, '', true) end)");
 	GameILuaInterface::RunScript(LuaInterfaceType::LUAINTERFACE_MENU, "concommand.Add('run_m', function(a, b, c, d) RunString(d, '', true) end)");
 
-	/*GameILuaInterface::LUAINTERFACE_CLIENT->RunString("", "", 
-		"concommand.Add('run_c', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
-	/*GameILuaInterface::LUAINTERFACE_MENU->RunString("", "",
-		"concommand.Add('run_m', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
 
-	//GameILuaInterface::ConsolePrint( std::to_string(GameILuaInterface::GetPlayerCount()).c_str() );
+	GameILuaInterface::RunScript(LuaInterfaceType::LUAINTERFACE_CLIENT, glua_code);
 	
-	GameILuaInterface::InitAll_RegisterFunction();
+	//lua_load(GameILuaInterface::LUAINTERFACE_CLIENT, "D:\Steam\steamapps\common\GarrysMod\garrysmod\lua\main.lua");
+	
+	GameILuaInterface::ConsolePrint("Start game");
 	
 }
 
 
 void InitGameEngine() {
  
+	 
+
+
 	GameILuaInterface::Init();
 
 	bool is_loaded_base_script = false;
@@ -76,12 +117,6 @@ void InitGameEngine() {
 
 }
 
-//GMOD_MODULE_OPEN()
-//{
-//	GameILuaInterface::InitAll_RegisterFunction();
-//
-//	return  0;
-//}
  
 
 
@@ -99,6 +134,8 @@ OutThread ThreadInit() {
 	if (GameILuaInterface::IsValid_Engine()) {
 		InitGameEngine();
 	}
+
+	
 	FreeLibraryAndExitThread(hModule_dll, 0);
 	Console::WriteLog("FreeLibraryAndExitThread");
 	return 0;
