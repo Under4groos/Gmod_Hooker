@@ -1,6 +1,8 @@
 ﻿// dllmain.cpp : Определяет точку входа для приложения DLL.
 #include "Headers.h"
 #include "Include/Modules/GameILuaInterface.h"
+ 
+ 
 HwndThread Thread, Threadun;
 
 
@@ -9,60 +11,30 @@ HMODULE hModule_dll;
  
 
 
-LUA_FUNCTION(MyFirstFunction)
-{
-	 
 
-	double number = (LUA -> GetNumber(1));  // Получить первый аргумент 
-
-	if (number > 9.0) // Если число больше 9... 
-	{
-		LUA -> PushBool(true);  // push true... 
-	}
-	else
-	{
-		LUA -> PushBool(false);  // в противном случае push false. 
-	}
-
-	return  1;  // Сколько значений мы возвращаем 
-}
-
-
-
-//void regfunc() {
-//	ModuleHandles::ClientLuaInterface->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);  // Помещаем глобальную таблицу 
-//	ModuleHandles::ClientLuaInterface->PushCFunction(MyFirstFunction);  // Помещаем нашу функцию 
-//	ModuleHandles::ClientLuaInterface->SetField(-2, "MyFirstFunction");  // Устанавливаем MyFirstFunction в lua в нашу функцию C++ 
-//	ModuleHandles::ClientLuaInterface->Pop();  // Помещаем глобальную таблицу из стека 
-//	Console::WriteLog("GMOD_MODULE_OPEN", std::to_string((int)ModuleHandles::ClientLuaInterface));
-//}
- 
  
 void Init_ClientJoinGame() {
 
+
+
+
+ 
 	GameILuaInterface::SetOwnerName("[XUILO][CODER][C++/C]Dalbaeb Ebobo");
+	
+	GameILuaInterface::ConsolePrint( "Start game");
+	
+	GameILuaInterface::RunScript(LuaInterfaceType::LUAINTERFACE_CLIENT, "concommand.Add('run_c', function(a, b, c, d) RunString(d, '', true) end)");
+	GameILuaInterface::RunScript(LuaInterfaceType::LUAINTERFACE_MENU, "concommand.Add('run_m', function(a, b, c, d) RunString(d, '', true) end)");
 
+	/*GameILuaInterface::LUAINTERFACE_CLIENT->RunString("", "", 
+		"concommand.Add('run_c', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
+	/*GameILuaInterface::LUAINTERFACE_MENU->RunString("", "",
+		"concommand.Add('run_m', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
 
-
-	/*std::string script = "";
-
-	script += " concommand.Add( \"rc\", function( ply, cmd, args, str ) ";
-	script += " RunString(str) ";
-	script += " end)  ";
-
-	regfunc();
-
-	ModuleHandles::ClientLuaInterface->RunString("", "", script.c_str(), true, true);
-	Console::WriteLog("Duped: ClientLuaInterface ", std::to_string((int)ModuleHandles::ClientLuaInterface));
-
-
-	 
-	GConsole::print(ModuleHandles::ClientLuaInterface, "Start game");
-	 
-
-
-	 
-	ModuleHandles::VGUI_LuaInterface->RunString("", "", "concommand.Add('rm', function(a, b, c, d) RunString(d, '', true) end)", true, true);*/
+	//GameILuaInterface::ConsolePrint( std::to_string(GameILuaInterface::GetPlayerCount()).c_str() );
+	
+	GameILuaInterface::InitAll_RegisterFunction();
+	
 }
 
 
@@ -75,22 +47,21 @@ void InitGameEngine() {
 	string name_app = "";
 	while (true)
 	{
-		if (!GameILuaInterface::IsValid_Engine())
+		if (!GameILuaInterface::EngineClient)
 			continue;
-		if (GameILuaInterface::EngineClient->is_ingame()) {
+		if (GameILuaInterface::EngineClient->is_ingame() && GameILuaInterface::LuaShared) {
 			if (is_loaded_base_script == false) {
 
 				Console::WriteLog("Connected");
 				Sleep(1000);
-				if (GameILuaInterface::IsValid_LuaShared())
+				 
+				GameILuaInterface::Init_Client_or_Menu();
+				if (GameILuaInterface::LUAINTERFACE_CLIENT)
 				{
-					GameILuaInterface::Init_Client_or_Menu();
-					if (GameILuaInterface::IsValid_LUAINTERFACE(LuaInterfaceType::LUAINTERFACE_CLIENT))
-					{
-						Init_ClientJoinGame();
+					Init_ClientJoinGame();
 						 
-					}
 				}
+				 
 
 				is_loaded_base_script = true;
 
@@ -105,7 +76,12 @@ void InitGameEngine() {
 
 }
 
-
+//GMOD_MODULE_OPEN()
+//{
+//	GameILuaInterface::InitAll_RegisterFunction();
+//
+//	return  0;
+//}
  
 
 

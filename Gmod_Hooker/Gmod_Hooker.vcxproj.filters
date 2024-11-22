@@ -57,10 +57,16 @@
     <ClInclude Include="Include\Modules\LuaLoader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Modules\GameConsole.h">
+    <ClInclude Include="Include\Modules\GameILuaInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Modules\GameILuaInterface.h">
+    <ClInclude Include="Include\httplib.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GarrysMod\Lua\angle.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GarrysMod\Lua\color.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
